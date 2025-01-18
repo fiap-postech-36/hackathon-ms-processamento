@@ -1,0 +1,5 @@
+# ignores these files when docker starts the build
+
+k8s
+docs
+.idea
