@@ -19,13 +19,15 @@ public class VideoProcessing implements Serializable {
     @Id
     private String id;
     private String usuarioId;
+    private String emailDoUsuario;
     private String urlDoVideo;
     private String urlDoZip;
     private ProcessingStatus processingStatus;
     private LocalDateTime processingStatusUpdateDate;
 
-    public VideoProcessing(String usuarioId, String urlDoVideo) {
+    public VideoProcessing(String usuarioId, String emailDoUsuario, String urlDoVideo) {
         this.usuarioId = usuarioId;
+        this.emailDoUsuario = emailDoUsuario;
         this.urlDoVideo = urlDoVideo;
         this.processingStatusUpdateDate = LocalDateTime.now();
         this.processingStatus = ProcessingStatus.PENDING;
@@ -33,6 +35,16 @@ public class VideoProcessing implements Serializable {
 
     public void setProcessingStatusToFailed() {
         this.processingStatusUpdateDate = LocalDateTime.now();
+        this.processingStatus = ProcessingStatus.FAILED;
+    }
+
+    public void setProcessingStatusToProcessing() {
+        this.processingStatusUpdateDate = LocalDateTime.now();
         this.processingStatus = ProcessingStatus.PROCESSING;
+    }
+
+    public void setProcessingStatusToFinished() {
+        this.processingStatusUpdateDate = LocalDateTime.now();
+        this.processingStatus = ProcessingStatus.FINISHED;
     }
 }

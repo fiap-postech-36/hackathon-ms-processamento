@@ -20,7 +20,7 @@ public class VideoProcessingApplicationService {
     private final MinioRepository minioRepository;
 
     public String createVideoProcessing(CreateVideoProcessingDTO createVideoProcessingDTO) {
-        VideoProcessing videoProcessing = videoProcessingRepository.save(new VideoProcessing(createVideoProcessingDTO.getUsuarioId(), createVideoProcessingDTO.getUrlDoVideo()));
+        VideoProcessing videoProcessing = videoProcessingRepository.save(new VideoProcessing(createVideoProcessingDTO.getUsuarioId(), createVideoProcessingDTO.getEmailDoUsuario(), createVideoProcessingDTO.getUrlDoVideo()));
         String videoProcessingId = videoProcessing.getId();
         sendVideoProcessingToQueue(videoProcessingId);
         return videoProcessingId;
@@ -28,7 +28,6 @@ public class VideoProcessingApplicationService {
 
     private void sendVideoProcessingToQueue(String id) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.KEY_NAME, id);
-        System.out.println("Mensagem enviada: " + id);
     }
 
     public List<VideoProcessingDTO> buscarTodosPorIdDoUsuario(String usuarioId) {
@@ -37,20 +36,37 @@ public class VideoProcessingApplicationService {
     }
 
     //talvez isolar em um serviço a parte
-    public String proccesVideo(String videoProcessingId) {
+    public void proccesVideo(String videoProcessingId) {
+        VideoProcessing videoProcessing = videoProcessingRepository.findById(videoProcessingId).orElseThrow(() -> new RuntimeException("Invalid id to procces video."));
         try {
-            VideoProcessing videoProcessing = videoProcessingRepository.findById(videoProcessingId).orElseThrow(() -> new RuntimeException("Invalid id to procces video."));
+            changeStatusToProcessing(videoProcessing);
             InputStream inputStream = minioRepository.downloadVideo(videoProcessing.getUrlDoVideo());
             //processar o video
             //zipar imagens
             //enviar zip para o minIO
             rabbitTemplate.convertAndSend(RabbitMQConfig.EMAIL_EXCHANGE_NAME, RabbitMQConfig.EMAIL_KEY_NAME,
-                    new EmailRabbitDTO("ulysses903@gmail.com", "SUCCESS", "Deu bom!!!"));
-            return videoProcessingId;
+                    new EmailRabbitDTO(videoProcessing.getEmailDoUsuario(), "SUCCESS", "Deu bom!!!"));
+            changeStatusToFinished(videoProcessing);
         } catch (Exception e) {
+            changeStatusToFailed(videoProcessing);
             rabbitTemplate.convertAndSend(RabbitMQConfig.EMAIL_EXCHANGE_NAME, RabbitMQConfig.EMAIL_KEY_NAME,
-                    new EmailRabbitDTO("ulysses903@gmail.com", "ERROR", "Deu ruim!!!"));
+                    new EmailRabbitDTO(videoProcessing.getEmailDoUsuario(), "ERROR", "Deu ruim!!!"));
             throw new RuntimeException(e);
         }
+    }
+
+    private void changeStatusToFailed(VideoProcessing videoProcessing) {
+        videoProcessing.setProcessingStatusToFailed();
+        videoProcessingRepository.save(videoProcessing);
+    }
+
+    private void changeStatusToFinished(VideoProcessing videoProcessing) {
+        videoProcessing.setProcessingStatusToFinished();
+        videoProcessingRepository.save(videoProcessing);
+    }
+
+    private void changeStatusToProcessing(VideoProcessing videoProcessing) {
+        videoProcessing.setProcessingStatusToProcessing();
+        videoProcessingRepository.save(videoProcessing);
     }
 }
