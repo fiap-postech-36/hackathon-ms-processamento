@@ -25,9 +25,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authz) -> authz
-                .requestMatchers(HttpMethod.GET, "/**").hasRole(USER)
-                .requestMatchers(HttpMethod.POST, "/**").hasRole(USER)
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                .requestMatchers(HttpMethod.GET, "/videoProcessing").hasRole(USER)
+                .requestMatchers(HttpMethod.POST, "/videoProcessing").hasRole(USER)
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html/**").permitAll()
                 .anyRequest().authenticated());
 
         http.sessionManagement(sess -> sess.sessionCreationPolicy(
