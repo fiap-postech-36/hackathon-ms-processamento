@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - "8082:8082"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://usuario:senha@db:27017/restaurant
       - RABBIT_HOST=af4b45659baf047e49724279ab7d29eb-1909975876.us-east-1.elb.amazonaws.com
