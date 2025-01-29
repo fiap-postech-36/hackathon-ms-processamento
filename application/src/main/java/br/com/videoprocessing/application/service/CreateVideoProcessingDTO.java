@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class CreateVideoProcessingDTO {
 
     private String usuarioId;
+    private String emailDoUsuario;
     private String urlDoVideo;
 }

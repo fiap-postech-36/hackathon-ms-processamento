@@ -7,6 +7,16 @@ spring:
     port: 5672
     username: ${RABBIT_USER:ulysses}
     password: ${RABBIT_PASSWORD:senha123}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 5000
+          multiplier: 2
+          max-interval: 10000
+        concurrency: 3
+        max-concurrency: 5
 springdoc:
   api-docs:
     enabled: 'true'
