@@ -1,4 +1,4 @@
-package br.com.videoprocessing.application.service;
+package br.com.videoprocessing.application.dto;
 
 import br.com.videoprocessing.domain.core.domain.entities.ProcessingStatus;
 import lombok.AllArgsConstructor;

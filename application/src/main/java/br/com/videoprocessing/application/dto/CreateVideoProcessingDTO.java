@@ -1,4 +1,4 @@
-package br.com.videoprocessing.application.service;
+package br.com.videoprocessing.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

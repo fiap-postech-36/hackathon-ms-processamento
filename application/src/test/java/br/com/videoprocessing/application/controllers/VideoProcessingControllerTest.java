@@ -1,7 +1,7 @@
 package br.com.videoprocessing.application.controllers;
 
 import br.com.videoprocessing.application.service.VideoProcessingApplicationService;
-import br.com.videoprocessing.application.service.VideoProcessingDTO;
+import br.com.videoprocessing.application.dto.VideoProcessingDTO;
 import br.com.videoprocessing.domain.core.domain.entities.ProcessingStatus;
 import br.com.videoprocessing.domain.core.domain.entities.VideoProcessing;
 import br.com.videoprocessing.infra.repository.MinioRepository;
@@ -40,13 +40,11 @@ class VideoProcessingControllerTest {
     @Test
     void testGetVideosProcessing() {
 
-        VideoProcessing videoProcessing = new VideoProcessing("usuarioId", "email@example.com", "http://example.com/video.mp4");
+        VideoProcessing videoProcessing = new VideoProcessing("ibraim", "leandroibraimads@gmail.com", "http://example.com/video.mp4");
         List<VideoProcessing> videoProcessingList = List.of(videoProcessing);
         when(videoProcessingRepository.findAll()).thenReturn(videoProcessingList);
 
-
         ResponseEntity<List<VideoProcessing>> response = videoProcessingController.getVideosProcessing();
-
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(videoProcessingList, response.getBody());
@@ -61,9 +59,7 @@ class VideoProcessingControllerTest {
         List<VideoProcessingDTO> videoProcessingDTOList = List.of(videoProcessingDTO);
         when(videoProcessingApplicationService.buscarTodosPorIdDoUsuario(usuarioId)).thenReturn(videoProcessingDTOList);
 
-
         ResponseEntity<List<VideoProcessingDTO>> response = videoProcessingController.getVideosProcessingByUsuario(usuarioId);
-
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(videoProcessingDTOList, response.getBody());
