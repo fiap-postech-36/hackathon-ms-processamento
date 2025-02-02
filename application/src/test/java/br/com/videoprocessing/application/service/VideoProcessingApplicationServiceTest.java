@@ -15,7 +15,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -38,7 +37,7 @@ class VideoProcessingApplicationServiceTest {
 
 
     @Test
-    void createVideoProcessing_ShouldReturnVideoProcessingId2() {
+    void createVideoProcessing_ShouldReturnVideoProcessingId() {
         CreateVideoProcessingDTO dto = new CreateVideoProcessingDTO("ibraim", "leandroibraimads@gmail.com", "http://example.com/video.mp4");
         VideoProcessing videoProcessing = new VideoProcessing(dto.getUsuarioId(), dto.getEmailDoUsuario(), dto.getUrlDoVideo());
         when(videoProcessingRepository.save(any(VideoProcessing.class))).thenReturn(videoProcessing);
