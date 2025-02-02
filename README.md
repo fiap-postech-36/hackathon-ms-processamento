@@ -52,7 +52,7 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 5. O arquivo ZIP é armazenado no MinIO.
 6. O status do processamento é atualizado e uma notificação por e-mail é enviada ao usuário.
 
-### 🛠 Tecnologias Utilizadas
+### 📋 Tecnologias Utilizadas
 - **Spring Boot:** Para desenvolvimento rápido e eficiente da aplicação.
 - **RabbitMQ:** Para gerenciar filas de processamento de forma assíncrona.
 - **MinIO:** Para armazenamento de vídeos e arquivos ZIP.
@@ -68,7 +68,7 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 
 ---
 
-## Stack Utilizada 🛠
+## 🛠 Stack Utilizada 
 - **Linguagem Principal:** Java 17 com Maven
 - **Web:** Spring Boot, Lombok
 - **Banco de Dados:** MongoDB
@@ -76,13 +76,13 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 
 ---
 
-## Comentar sobre RabbitMQ e MinIO 🤔
+## 🤔 Comentario sobre RabbitMQ e MinIO 
 - **RabbitMQ:** Utilizado para gerenciar as filas de processamento, garantindo que os vídeos sejam processados de forma assíncrona e eficiente. Sua implementação garante alta disponibilidade e distribuição das tarefas para os workers.
 - **MinIO:** Sistema de armazenamento de objetos compatível com Amazon S3, utilizado para armazenar os vídeos e os arquivos ZIP gerados durante o processamento. Ele é escalável e ideal para armazenar grandes volumes de dados de forma segura.
 
 ---
 
-## Instalação usando apenas Docker
+## 🐳 Instalação usando apenas Docker
 
 1. Na raiz do projeto, execute o comando abaixo para buildar o projeto:
 
@@ -103,7 +103,7 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 
 ---
 
-## Instalação usando Kubernetes
+## 💻 Instalação usando Kubernetes
 
 ⚠️ **Atenção:** Recomenda-se usar as mesmas tecnologias especificadas na Stack para a criação do cluster, conforme descrito neste readme.
 
