@@ -1,5 +1,6 @@
 package br.com.videoprocessing.application.service;
 
+import br.com.videoprocessing.application.dto.EmailRabbitDTO;
 import br.com.videoprocessing.application.infra.RabbitMQConfig;
 import br.com.videoprocessing.domain.core.domain.entities.VideoProcessing;
 import br.com.videoprocessing.infra.repository.MinioRepository;

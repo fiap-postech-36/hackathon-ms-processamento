@@ -1,5 +1,7 @@
 package br.com.videoprocessing.application.service;
 
+import br.com.videoprocessing.application.dto.CreateVideoProcessingDTO;
+import br.com.videoprocessing.application.dto.VideoProcessingDTO;
 import br.com.videoprocessing.application.infra.RabbitMQConfig;
 import br.com.videoprocessing.domain.core.domain.entities.VideoProcessing;
 import br.com.videoprocessing.infra.repository.VideoProcessingRepository;
