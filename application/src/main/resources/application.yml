@@ -4,9 +4,9 @@ spring:
       uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/restaurant}
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
-    port: 5672
-    username: ${RABBIT_USER:ulysses}
-    password: ${RABBIT_PASSWORD:senha123}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:fiap}
+    password: ${RABBIT_PASSWORD:fiap12345}
     listener:
       simple:
         retry:
@@ -48,7 +48,7 @@ management:
       oauth2:
         resourceserver:
           jwt:
-            issuer-uri: http://localhost:8080/realms/auth
+            issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/auth}
             jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
     # JWT Configuration
@@ -60,6 +60,6 @@ management:
 
 minio:
   url: ${MINIO_URL:http://localhost:9000}
-  access-key: ${MINIO_ACCESS_KEY:admin}
-  secret-key: ${MINIO_SECRET_KEY:admin123}
+  access-key: ${MINIO_ACCESS_KEY:fiap}
+  secret-key: ${MINIO_SECRET_KEY:fiap12345}
   bucket-name: ${MINIO_BUCKET_NAME:videos-hackaton}

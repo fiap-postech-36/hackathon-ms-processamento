@@ -1,17 +1,25 @@
 services:
-  app:
+  videoprocessing:
     build: .
     ports:
       - "8082:8082"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://usuario:senha@db:27017/restaurant
-      - RABBIT_HOST=af4b45659baf047e49724279ab7d29eb-1909975876.us-east-1.elb.amazonaws.com
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
       - RABBIT_USER=fiap
-      - RABBIT_PASSWORD=GpP36_Fiap@2024!
+      - RABBIT_PASSWORD=fiap12345
+      - MINIO_URL=http://minio:9000
+      - MINIO_ACCESS_KEY=fiap
+      - MINIO_SECRET_KEY=fiap12345
+      - MINIO_BUCKET_NAME=videos-hackaton
+      - ISSUER_URI=http://localhost:8080/realms/auth #sua issuer uri de acordo com que você expos ao subir o ms de autenticação
     depends_on:
-      - db
+      - mongodb
+      - rabbitmq
+      - minio
 
-  db:
+  mongodb:
     image: mongo:latest
     ports:
       - "27017:27017"
@@ -28,8 +36,8 @@ services:
     volumes:
       - ./dados:/var/lib/rabbitmq/
     environment:
-      - RABBITMQ_DEFAULT_USER=ulysses
-      - RABBITMQ_DEFAULT_PASS=senha123
+      - RABBITMQ_DEFAULT_USER=fiap
+      - RABBITMQ_DEFAULT_PASS=fiap12345
 
   minio:
     image: minio/minio:latest
@@ -38,11 +46,15 @@ services:
       - "9000:9000"
       - "9090:9090"
     environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin123
+      MINIO_ROOT_USER: fiap
+      MINIO_ROOT_PASSWORD: fiap12345
     volumes:
       - ./data:/data
     command: server /data --console-address ":9090"
 
 volumes:
   mongodb-data:
+
+networks:
+  my_network:
+    driver: bridge
