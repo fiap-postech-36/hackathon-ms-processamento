@@ -6,16 +6,27 @@ O Microserviço de Processamento de Vídeo é uma aplicação desenvolvida para 
 
 ## 🚀Objetivo Principal:
 #### Fornecer uma solução para processamento de vídeos em lote, onde:
-- Um vídeo é enviado para processamento.
+- O usuario faz o upload de um vídeo em um sistema de armazenamento de objetos (MinIO direto pelo front.
+- No final do upload um dto com os dados do usuario e o caminho do video para o minIO é enviado para API.
+- Na api esses dados são salvos em um banco não relacional e gera um elemento na fila do RabbitMQ.
+- A fila é escutada pela aplicação, e o processamento é iniciado.
 - Frames são extraídos em intervalos de tempo definidos (por exemplo, a cada 20 segundos).
 - Os frames são compactados em um arquivo ZIP.
 - O arquivo ZIP é armazenado em um sistema de armazenamento de objetos (MinIO).
 - O status do processamento é monitorado e notificações são enviadas por e-mail ao usuário.
+- Em caso de erro o elemento é enviado para uma dead letter queue no RabbitMQ e marcado como failure no banco.
+- Apos processar os itens da fila que ainda não foram executado o RabbitMQ executa novamente o elemento da dead letter.
+- O elemento so deixará de ser executado após duas tentativas de falha, totalizando três execuções para considerar uma falha completa.
+- Os elementos são escutados em paralelo, executando até três vídeos de uma vez.
+- So é possivel fazer acesso a API se tiver um usuário cadastrado no realm auth do Keycloak
 
 ### 👋Funcionalidades Principais
 
 - **Upload e Processamento de Vídeos:**  
-  O vídeo é enviado para o serviço, que inicia o processamento automaticamente. Frames são extraídos em intervalos configuráveis e compactados em um arquivo ZIP.
+  O front cuida de fazer o upload do vídeo no minIO, após o upload completar o caminho do vídeo é enviado para o endpoint de processamento juntos com os dados do usuário. Essas informações são salvas em banco e criam um elemento na fila do rabbitMQ. A aplicação escuta a fila, consultando no banco pelo id da solicitação, buscando o vídeo no minIO e começando a extrair os frames do vídeo de acordo com o intervalo. O vídeo é baixado, seus frames são extraídos em intervalos configuráveis e compactados em um arquivo ZIP que ao final é salvo no minIO e seu caminho no banco para o usuário baixar.
+
+- **Armazenamento de dados:**  
+  É utilizado o mongoDB para guardar a relação de caminho do video a ser processado com o usuário. Como são informações básicas e sem relação com entidade um banco não relacional foi escolhido.
 
 - **Armazenamento de Arquivos:**  
   O vídeo original e o arquivo ZIP gerado são armazenados em um sistema de armazenamento de objetos (MinIO).
@@ -39,18 +50,23 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 - **Aplicações de Backup:** Para compactar e armazenar frames de vídeos de forma eficiente.
 
 ### 🤌 Benefícios
-- **Escalabilidade:** O uso de RabbitMQ permite que o serviço processe múltiplos vídeos simultaneamente.
+- **Escalabilidade:** O sistema é facilmente escalavel com novos pods no kubernets já que não temos perigos de concorrência de dados pois utilizamos fila.
+- **Resiliência:** O uso de RabbitMQ permite que o serviço processe múltiplos vídeos simultaneamente e com a dead letter queue predefinimos um número de execuções para considerarmos falho.
 - **Segurança:** Autenticação OAuth2 e JWT garantem que apenas usuários autorizados possam acessar o serviço.
 - **Eficiência:** A extração de frames e a compactação em ZIP são realizadas de forma otimizada, reduzindo o tempo de processamento.
 - **Notificações em Tempo Real:** Os usuários são notificados imediatamente sobre o status do processamento.
 
 ### 😎 Fluxo de Funcionamento
-1. O usuário envia um vídeo para processamento via API.
-2. O serviço salva o vídeo no MinIO e envia uma mensagem para a fila do RabbitMQ.
-3. Um worker consome a mensagem e inicia o processamento do vídeo.
-4. Frames são extraídos e compactados em um arquivo ZIP.
-5. O arquivo ZIP é armazenado no MinIO.
-6. O status do processamento é atualizado e uma notificação por e-mail é enviada ao usuário.
+1. O usuário faz o upload de um vídeo para o minIO.
+2. No final do upload um dto com os dados do usuario e o caminho do video para o minIO é enviado para API.
+3. Na api esses dados são salvos em um banco não relacional e gera um elemento na fila do RabbitMQ.
+4. Um worker consome a mensagem e inicia o processamento do vídeo.
+5. Frames são extraídos e compactados em um arquivo ZIP.
+6. O arquivo ZIP é armazenado no MinIO.
+7. O status do processamento é atualizado e uma notificação por e-mail é enviada ao usuário.
+8. No caso de erro da primeira execução o sistema tenta executar mais duas vezes, parando de executar na terceira falha.
+9. Os elementos são executados em paralelo, até 3 videos por pod.
+10. Tanto a quantidade de tentativas como vídeos em paralelo são configuráveis.
 
 ### 📋 Tecnologias Utilizadas
 - **Spring Boot:** Para desenvolvimento rápido e eficiente da aplicação.
@@ -59,11 +75,13 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 - **JavaCV:** Para manipulação de vídeos e extração de frames.
 - **OAuth2/JWT:** Para autenticação e autorização.
 - **Swagger:** Para documentação da API.
+- **MongoDB:** Para armazenamento de dados.
 
 👨‍💻 Requisitos do Sistema
 - **Java 17**
 - **RabbitMQ**
 - **MinIO**
+- **MongoDB**
 - **Docker** (opcional, para execução em container)
 
 ---
@@ -99,7 +117,7 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 
 3. Após a instalação, a documentação Swagger da API pode ser encontrada no seguinte link:
 
-[http://localhost:8080/videoprocessing/swagger-ui/index.html](http://localhost:8080/videoprocessing/swagger-ui/index.html) 🔗
+[http://localhost:8082/videoprocessing/swagger-ui/index.html](http://localhost:8082/videoprocessing/swagger-ui/index.html) 🔗
 
 ---
 
@@ -110,7 +128,7 @@ Este microserviço pode ser utilizado em diversos cenários, como:
 ---
 
 ## 🔗 Links
-[Documentação da API](http://localhost:8080/videoprocessing/swagger-ui/index.html)
+[Documentação da API](http://localhost:8082/videoprocessing/swagger-ui/index.html)
 
 ⚠️ VERIFICAR!!! // LINK DA APRESENTAÇÃO
 

@@ -2,6 +2,7 @@ package br.com.videoprocessing.application.infra;
 
 import br.com.videoprocessing.application.infra.security.JwtConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${management.health.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private String issuerUrl;
 
     public static final String USER = "auth-role";
 
@@ -46,6 +50,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("http://localhost:8080/realms/auth");
+        return JwtDecoders.fromIssuerLocation(issuerUrl);
     }
 }
