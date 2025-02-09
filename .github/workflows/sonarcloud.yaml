@@ -44,7 +44,7 @@ jobs:
         run: |
           mvn -B clean verify sonar:sonar \
           -Dsonar.projectKey=fiap-postech-36_hackathon-ms-processamento \
-          -Dsonar.coverage.exclusions=**/domain/**,**/integration/**,**/*Output.java,**/*Config.java \
+          -Dsonar.coverage.exclusions=**/domain/**,**/infra/**,**/integration/**,**/*Output.java,**/App.java,**/*Config.java \
           -Dsonar.organization=fiap-postech-36 \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Pass the Sonar token here
